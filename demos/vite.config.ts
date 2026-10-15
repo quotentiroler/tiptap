@@ -12,12 +12,13 @@ const getPackageDependencies = () => {
 
   function collectPackageInformation(path: string) {
     const packagesPath = resolve(import.meta.dirname, '..', path)
+    const packagesPattern = fg.convertPathToPattern(packagesPath)
 
-    fg.sync(`${packagesPath}/*`, { onlyDirectories: true })
+    fg.sync(`${packagesPattern}/*`, { onlyDirectories: true })
       .map(name => basename(name))
       .forEach(name => {
         if (name === 'pm') {
-          fg.sync(`${packagesPath}/${name}/*`, { onlyDirectories: true }).forEach(subName => {
+          fg.sync(`${packagesPattern}/${name}/*`, { onlyDirectories: true }).forEach(subName => {
             const subPkgName = basename(subName)
 
             if (subPkgName === 'dist' || subPkgName === 'node_modules') {
@@ -37,7 +38,7 @@ const getPackageDependencies = () => {
           name === 'react' ||
           name === 'vue'
         ) {
-          fg.sync(`${packagesPath}/${name}/src/*`, { onlyDirectories: true }).forEach(subName => {
+          fg.sync(`${packagesPattern}/${name}/src/*`, { onlyDirectories: true }).forEach(subName => {
             const subPkgName = basename(subName)
 
             paths.push({
